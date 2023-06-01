@@ -108,6 +108,23 @@ describe("downloadManager", () => {
     expect(dm.getNextSlot(5)).toHaveLength(4);
     expect(dm.getNextSlot(5)).toHaveLength(0);
   });
+
+  test("async getNextSlot", async () => {
+    const dm = new DownloadManager();
+    const series1 = generateImageIds("series1-", 8);
+    const series2 = generateImageIds("series2-", 11);
+    dm.addSeries("series1-", series1);
+    dm.addSeries("series2-", series2);
+
+    const nextSlot = await dm.getNextSlotAsync(5);
+    expect(nextSlot).toHaveLength(5);
+    expect(nextSlot.map(instance => instance.imageId)).toEqual(
+      series1.slice(0, 5)
+    );
+    expect(nextSlot.map(instance => instance.seriesId)).toEqual(
+      new Array(5).fill("series1-")
+    );
+  });
 });
 
 describe("alternate strategy", () => {

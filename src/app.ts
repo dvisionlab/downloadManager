@@ -26,13 +26,8 @@ function remove(serieId: string) {
   dm.removeSeries(serieId);
 }
 
-function getNextSlot() {
-  const slot = dm.getNextSlot(2);
-  if (slot) {
-    return slot;
-  } else {
-    setTimeout(getNextSlot, 50);
-  }
+async function getNextSlot() {
+  await dm.getNextSlotAsync(2);
 }
 
 // @ts-ignore

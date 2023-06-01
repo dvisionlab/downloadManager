@@ -70,7 +70,6 @@ export class DownloadManager {
     this.freeze = false;
   }
 
-  // TODO promise
   getNextSlot(slotDimension: number) {
     if (this.freeze) {
       return null;
@@ -78,5 +77,17 @@ export class DownloadManager {
     const nextSlot = this.downloadQueue.splice(0, slotDimension);
     if (this.verbose) console.log("nextSlot", nextSlot);
     return nextSlot;
+  }
+
+  async getNextSlotAsync(slotDimension: number) {
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        const nextSlot = this.getNextSlot(slotDimension);
+        if (nextSlot) {
+          clearInterval(interval);
+          resolve(nextSlot);
+        }
+      }, 20);
+    });
   }
 }
