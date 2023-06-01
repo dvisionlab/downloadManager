@@ -93,4 +93,18 @@ describe("downloadManager", () => {
       new Array(3).fill("series2-")
     );
   });
+
+  test("get slots until the end", () => {
+    const dm = new downloadManager();
+    const series1 = generateImageIds("series1-", 8);
+    const series2 = generateImageIds("series2-", 11);
+    dm.addSeries("series1-", series1);
+    dm.addSeries("series2-", series2);
+
+    for (let i = 0; i < 3; i++) {
+      expect(dm.getNextSlot(5)).toHaveLength(5);
+    }
+    expect(dm.getNextSlot(5)).toHaveLength(4);
+    expect(dm.getNextSlot(5)).toHaveLength(0);
+  });
 });
