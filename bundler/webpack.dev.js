@@ -9,6 +9,7 @@ const infoColor = _message => {
 };
 
 module.exports = merge(commonConfiguration, {
+  entry: path.resolve(__dirname, "../src/app.ts"),
   devtool: "inline-source-map",
   stats: "errors-warnings",
   mode: "development",
