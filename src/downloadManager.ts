@@ -10,7 +10,7 @@ type downloadQueueItem = {
   imageId: string;
 };
 
-export class downloadManager {
+export class DownloadManager {
   private downloadQueue: downloadQueueItem[] = [];
   private addingQueue: addingQueueItem[] = [];
   private removingQueue: removingQueueItem[] = [];

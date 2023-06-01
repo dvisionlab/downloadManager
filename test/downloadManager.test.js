@@ -1,4 +1,4 @@
-const { downloadManager } = require("../src/downloadManager");
+const { DownloadManager } = require("../src/downloadManager");
 
 function generateImageIds(seriesId, count = 10) {
   const imageIds = [];
@@ -14,16 +14,16 @@ describe("downloadManager", () => {
   });
 
   test("downloadManager import", () => {
-    expect(downloadManager).toBeDefined();
+    expect(DownloadManager).toBeDefined();
   });
 
   test("downloadManager constructor", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     expect(dm).toBeDefined();
   });
 
   test("add a series to dm", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     const series1 = generateImageIds("series1", 11);
     dm.addSeries("series1", series1);
     const nextSlot = dm.getNextSlot(5);
@@ -37,7 +37,7 @@ describe("downloadManager", () => {
   });
 
   test("add two series to dm", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     const series1 = generateImageIds("series1-", 8);
     const series2 = generateImageIds("series2-", 11);
     dm.addSeries("series1-", series1);
@@ -58,7 +58,7 @@ describe("downloadManager", () => {
   });
 
   test("add two series to dm, remove one", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     const series1 = generateImageIds("series1-", 8);
     const series2 = generateImageIds("series2-", 11);
     dm.addSeries("series1-", series1);
@@ -72,7 +72,7 @@ describe("downloadManager", () => {
   });
 
   test("add two series to dm, remove one after getting a slot", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     const series1 = generateImageIds("series1-", 8);
     const series2 = generateImageIds("series2-", 11);
     dm.addSeries("series1-", series1);
@@ -95,7 +95,7 @@ describe("downloadManager", () => {
   });
 
   test("get slots until the end", () => {
-    const dm = new downloadManager();
+    const dm = new DownloadManager();
     const series1 = generateImageIds("series1-", 8);
     const series2 = generateImageIds("series2-", 11);
     dm.addSeries("series1-", series1);
