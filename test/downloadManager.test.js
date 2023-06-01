@@ -1,3 +1,4 @@
+import data from "./data.json";
 const { DownloadManager } = require("../src/downloadManager");
 
 function generateImageIds(seriesId, count = 10) {
@@ -106,5 +107,74 @@ describe("downloadManager", () => {
     }
     expect(dm.getNextSlot(5)).toHaveLength(4);
     expect(dm.getNextSlot(5)).toHaveLength(0);
+  });
+});
+
+describe("alternate strategy", () => {
+  test("add a series to dm", () => {
+    const dm = new DownloadManager("alternate");
+    const series1 = generateImageIds("series1", 11);
+    dm.addSeries("series1", series1);
+    const nextSlot = dm.getNextSlot(5);
+    expect(nextSlot).toHaveLength(5);
+    expect(nextSlot.map(instance => instance.imageId)).toEqual(
+      series1.slice(0, 5)
+    );
+    expect(nextSlot.map(instance => instance.seriesId)).toEqual(
+      new Array(5).fill("series1")
+    );
+  });
+
+  test("add two series to dm", () => {
+    const dm = new DownloadManager();
+    const series1 = generateImageIds("series1-", 3);
+    const series2 = generateImageIds("series2-", 6);
+    dm.addSeries("series1-", series1);
+    dm.addSeries("series2-", series2);
+    const nextSlot = dm.getNextSlot(9);
+    expect(nextSlot).toEqual(data.alternate2add);
+  });
+
+  test("add three series to dm", () => {
+    const dm = new DownloadManager();
+    const series1 = generateImageIds("series1-", 6);
+    const series2 = generateImageIds("series2-", 7);
+    const series3 = generateImageIds("series3-", 11);
+    dm.addSeries("series1-", series1);
+    dm.addSeries("series2-", series2);
+    dm.addSeries("series3-", series3);
+    const nextSlot = dm.getNextSlot(24);
+    expect(nextSlot).toEqual(data.alternate3add);
+  });
+
+  test("get slots until the end", () => {
+    const dm = new DownloadManager("alternate");
+    const series1 = generateImageIds("series1-", 5);
+    const series2 = generateImageIds("series2-", 6);
+    const series3 = generateImageIds("series2-", 8);
+    dm.addSeries("series1-", series1);
+    dm.addSeries("series2-", series2);
+    dm.addSeries("series3-", series3);
+
+    for (let i = 0; i < 3; i++) {
+      expect(dm.getNextSlot(5)).toHaveLength(5);
+    }
+    expect(dm.getNextSlot(5)).toHaveLength(4);
+    expect(dm.getNextSlot(5)).toHaveLength(0);
+  });
+});
+
+describe("odd user behaviour", () => {
+  test("get slot without adding series", () => {
+    const dm = new DownloadManager();
+    const nextSlot = dm.getNextSlot(5);
+    expect(nextSlot).toHaveLength(0);
+  });
+
+  test("remove series that was not added", () => {
+    const dm = new DownloadManager();
+    dm.removeSeries("series1");
+    const nextSlot = dm.getNextSlot(5);
+    expect(nextSlot).toHaveLength(0);
   });
 });

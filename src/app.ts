@@ -1,24 +1,24 @@
 import "./style.css";
 
-import { downloadManager } from "./downloadManager";
+import { DownloadManager } from "./downloadManager";
 
-const dm = new downloadManager();
+const dm = new DownloadManager("alternate", true);
 
 console.log("dm", dm);
 
 // functions to test the download manager:
 
-function generateImageIds(seriesId: string) {
+function generateImageIds(seriesId: string, numberOfImages: number = 10) {
   const imageIds = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < numberOfImages; i++) {
     imageIds.push(`${seriesId}image${i}`);
   }
   return imageIds;
 }
 
-function add(serieId: string) {
+function add(serieId: string, numberOfImages: number) {
   console.log("add", serieId);
-  dm.addSeries(serieId, generateImageIds(serieId));
+  dm.addSeries(serieId, generateImageIds(serieId, numberOfImages));
 }
 
 function remove(serieId: string) {

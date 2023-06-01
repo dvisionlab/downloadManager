@@ -1,23 +1,25 @@
-type addingQueueItem = {
-  seriesId: string;
-  imageIds: string[];
-};
+import type {
+  downloadQueueItem,
+  addingQueueItem,
+  removingQueueItem
+} from "./types.d";
 
-type removingQueueItem = string;
-
-type downloadQueueItem = {
-  seriesId: string;
-  imageId: string;
-};
+import strategiesFns from "./strategies";
 
 export class DownloadManager {
   private downloadQueue: downloadQueueItem[] = [];
   private addingQueue: addingQueueItem[] = [];
   private removingQueue: removingQueueItem[] = [];
   private freeze = false;
+  private strategy: keyof typeof strategiesFns;
+  private verbose: boolean = false;
 
-  constructor() {
-    console.log("downloadManager constructor");
+  constructor(
+    strategy: keyof typeof strategiesFns = "concat",
+    verbose?: boolean
+  ) {
+    this.strategy = strategy;
+    this.verbose = verbose ?? false;
   }
 
   addSeries(seriesId: string, imageIds: string[]) {
@@ -54,19 +56,15 @@ export class DownloadManager {
     });
 
     // apply "add" modifications
-    this.addingQueue.forEach(item => {
-      item.imageIds.forEach(imageId => {
-        this.downloadQueue.push({
-          seriesId: item.seriesId,
-          imageId: imageId
-        });
-      });
-    });
+    this.downloadQueue = strategiesFns[this.strategy](
+      this.addingQueue,
+      this.downloadQueue
+    );
 
     this.addingQueue = [];
     this.removingQueue = [];
 
-    console.log("downloadQueue", this.downloadQueue);
+    if (this.verbose) console.log("downloadQueue", this.downloadQueue);
 
     // unblock requests
     this.freeze = false;
@@ -78,7 +76,7 @@ export class DownloadManager {
       return null;
     }
     const nextSlot = this.downloadQueue.splice(0, slotDimension);
-    console.log("nextSlot", nextSlot);
+    if (this.verbose) console.log("nextSlot", nextSlot);
     return nextSlot;
   }
 }
