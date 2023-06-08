@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack --config ./bundler/webpack.prod.js",
     "dev": "webpack serve --config ./bundler/webpack.dev.js",
-    "test": "jest"
+    "test": "jest",
+    "docs": "typedoc --out ./docs ./src/downloadManager.ts"
   },
   "main": "dist/dvDownloadManager.js",
   "dependencies": {
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.21.5",
     "babel-jest": "^29.5.0",
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "typedoc": "^0.24.8"
   }
 }

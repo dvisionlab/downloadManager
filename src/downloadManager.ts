@@ -9,34 +9,35 @@ import strategiesFns from "./strategies";
 
 /**
  * DownloadManager class
- * @param {string} strategy - The strategy to use to download the images
- * @param {boolean} verbose - If true, the download manager will log its actions
- * @property {boolean} isDownloading - True if the download manager is downloading
- * @property {string} strategy - The strategy to use to download the images
- * @property {boolean} verbose - If true, the download manager will log its actions
- * @property {seriesData} seriesData - The data of the series
- * @property {downloadQueueItem[]} downloadQueue - The download queue
- * @property {addingQueueItem[]} addingQueue - The adding queue
- * @property {removingQueueItem[]} removingQueue - The removing queue
- * @property {boolean} freeze - If true, the download manager will not return any slot, since it is reworking the queue
- * @getter {boolean} isDownloading - True if the download process is on going
- * @method {boolean} addSeries - Add a series to the download manager
- * @method {void} removeSeries - Remove a series from the download manager
- * @method {void} reworkQueue - Rework the download queue after each request
- * @method {Promise<downloadQueueItem[]>} getNextSlotAsync - Get the next slot
- * @method {downloadQueueItem[]} getNextSlot - Get the next slot
- * @method {void} getStatus - Get the status of a specific series in the download manager
- * @method {seriesData} getOverallStatus - Get the status of all the series in the download manager
- * @method {void} updateIsDownloading - Update the isDownloading property of the series in the download manager
- * @method {void} updateStatus - Update the status of all the series in the download manager
  */
 export class DownloadManager {
+  /**
+   * The real download queue
+   */
   private downloadQueue: downloadQueueItem[] = [];
+  /**
+   * The queue of series to add to the download queue
+   */
   private addingQueue: addingQueueItem[] = [];
+  /**
+   * The queue of series to remove from the download queue
+   */
   private removingQueue: removingQueueItem[] = [];
+  /**
+   * Token to freeze the production of new download slots
+   */
   private freeze = false;
+  /**
+   * The strategy to use to create the download queue
+   */
   private strategy: keyof typeof strategiesFns;
+  /**
+   * If true, the download manager will log to the console
+   */
   private verbose: boolean = false;
+  /**
+   * The data of the series in the download manager, used to keep track of download progress
+   */
   private seriesData: seriesData = {};
 
   constructor(
@@ -78,9 +79,7 @@ export class DownloadManager {
 
   /**
    * Add a new series in the download manager
-   * @param seriesId {string}
-   * @param imageIds {string[]}
-   * @returns {boolean} True if the series was added, false otherwise
+   * @returns True if the series was added, false otherwise
    */
   addSeries(seriesId: string, imageIds: string[]) {
     // check that the series is not already in the seriesData
@@ -103,6 +102,7 @@ export class DownloadManager {
     return true;
   }
 
+  // TODO return boolean if series was removed
   removeSeries(seriesId: string) {
     // directly remove from download queue (you don't add and remove the same series in the same time)
     this.addingQueue = this.addingQueue.filter(
@@ -146,8 +146,6 @@ export class DownloadManager {
 
   /**
    * Returns the status of the requested series
-   * @param seriesId {string}
-   * @returns {object} {remaining: number, initial: number}
    */
   getStatus(seriesId: string) {
     const remaining = this.downloadQueue.filter(
@@ -159,7 +157,6 @@ export class DownloadManager {
 
   /**
    * Returns the status of all series
-   * @returns {object} @type {seriesId: {remaining: number, initial: number}}
    */
   getOverallStatus() {
     const seriesIds = Object.keys(this.seriesData);

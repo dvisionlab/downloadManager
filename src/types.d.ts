@@ -5,11 +5,22 @@ export type addingQueueItem = {
 
 export type removingQueueItem = string;
 
+/**
+ * An item of the download queue
+ * @typedef {Object} downloadQueueItem
+ */
 export type downloadQueueItem = {
   seriesId: string;
   imageId: string;
 };
 
+/**
+ * The strategy to use to create the download queue
+ * @enum {string}
+ * @readonly
+ * @property {string} CONCAT - Concatenate the adding queue to the download queue
+ * @property {string} ALTERNATE - Create a new queue alternating series
+ */
 export enum strategies {
   CONCAT = "CONCAT",
   ALTERNATE = "ALTERNATE"
