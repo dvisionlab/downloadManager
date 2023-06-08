@@ -10,10 +10,20 @@
       crossorigin="anonymous"
     />
     <title>webpack-boilerplate</title>
+    <!-- <style>
+      ul {
+        list-style-type: none;
+      }
+    </style> -->
   </head>
   <body>
     <div id="bar" class="input-group m-1"></div>
-    <div id="main-div" class="m-4">
+    <div class="m-4">
+      <h1>
+        isDowloading: <span id="isDownloading" style="color: red">false</span>
+      </h1>
+    </div>
+    <div class="m-4">
       <button onclick='add("1", 10)'>Add series1 (10 images)</button>
       <button onclick='add("2", 7)'>Add series2 (7 images)</button>
       <button onclick='add("3", 8)'>Add series3 (8 images)</button>
@@ -24,6 +34,11 @@
       <button onclick='remove("3")'>Remove series3</button>
     </div>
     <div class="m-4">
-      <button onclick='getNextSlot()'>Get next slot</button>
+      <button onclick="getNextSlot()">Get next slot</button>
+    </div>
+    <div class="m-4">
+      <h3>status:</h3>
+      <ul id="status" style="list-style-type: disclosure-closed"></ul>
+    </div>
   </body>
 </html>

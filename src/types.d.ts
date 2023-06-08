@@ -14,3 +14,7 @@ export enum strategies {
   CONCAT = "CONCAT",
   ALTERNATE = "ALTERNATE"
 }
+
+export type seriesData = {
+  [seriesId: string]: { numberOfImages: number; isDownloading: boolean };
+};

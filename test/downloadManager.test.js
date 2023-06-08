@@ -27,8 +27,16 @@ describe("downloadManager", () => {
     const dm = new DownloadManager();
     const series1 = generateImageIds("series1", 11);
     dm.addSeries("series1", series1);
+    expect(dm.getStatus("series1")).toEqual({
+      remaining: 11,
+      initial: 11
+    });
     const nextSlot = dm.getNextSlot(5);
     expect(nextSlot).toHaveLength(5);
+    expect(dm.getStatus("series1")).toEqual({
+      remaining: 6,
+      initial: 11
+    });
     expect(nextSlot.map(instance => instance.imageId)).toEqual(
       series1.slice(0, 5)
     );
@@ -43,6 +51,14 @@ describe("downloadManager", () => {
     const series2 = generateImageIds("series2-", 11);
     dm.addSeries("series1-", series1);
     dm.addSeries("series2-", series2);
+    expect(dm.getStatus("series1-")).toEqual({
+      remaining: 8,
+      initial: 8
+    });
+    expect(dm.getStatus("series2-")).toEqual({
+      remaining: 11,
+      initial: 11
+    });
     const nextSlot = dm.getNextSlot(19);
     expect(nextSlot.slice(0, 8).map(instance => instance.imageId)).toEqual(
       series1

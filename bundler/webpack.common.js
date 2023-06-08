@@ -60,7 +60,6 @@ module.exports = {
           filename: "assets/fonts/[hash][ext]"
         }
       },
-
       // typescript support
       {
         test: /\.tsx?$/,

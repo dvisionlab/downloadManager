@@ -26,7 +26,7 @@ module.exports = merge(commonConfiguration, {
     watchFiles: ["src/**", "static/**"],
     static: {
       watch: true,
-      directory: path.join(__dirname, "../static")
+      directory: path.join(__dirname, "../dist")
     },
     client: {
       logging: "none",

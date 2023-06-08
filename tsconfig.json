@@ -5,11 +5,10 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "es2015",
-    "target": "es5",
+    "target": "es6",
     "allowJs": true,
     "moduleResolution": "node",
-    // handsontable
-    // "rootDir": "src",
+    // "declaration": true,
     "esModuleInterop": true
     // "module": "commonjs",
   }
