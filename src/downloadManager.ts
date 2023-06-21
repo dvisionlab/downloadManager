@@ -83,6 +83,7 @@ export class DownloadManager {
    */
   addSeries(seriesId: string, imageIds: string[]) {
     // check that the series is not already in the seriesData
+    // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
     if (seriesId in this.seriesData) {
       console.warn(`Series ${seriesId} is already in the download manager`);
       return false;
@@ -151,8 +152,8 @@ export class DownloadManager {
     const remaining = this.downloadQueue.filter(
       item => item.seriesId === seriesId
     ).length;
-    const initial = this.seriesData[seriesId].numberOfImages;
-    return { remaining, initial };
+    const initial = this.seriesData[seriesId]?.numberOfImages;
+    return remaining ? { remaining, initial } : null;
   }
 
   /**

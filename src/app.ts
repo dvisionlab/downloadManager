@@ -2,7 +2,7 @@ import "./style.css";
 
 import { DownloadManager } from "./downloadManager";
 
-const dm = new DownloadManager("alternate", true);
+const dm = new DownloadManager("concat", true);
 
 console.log("dm", dm);
 
@@ -18,8 +18,10 @@ function updateIsDownloading(bool: boolean) {
 }
 
 function updateStatus(content: {
-  [k: string]: { remaining: number; initial: number };
+  [k: string]: { remaining: number; initial: number } | null;
 }) {
+  if (!content) return;
+
   const list = document.getElementById("status");
   if (list) {
     list.innerHTML = "";
