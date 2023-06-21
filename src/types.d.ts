@@ -1,18 +1,20 @@
 export type addingQueueItem = {
-  seriesId: string;
-  imageIds: string[];
-};
+  studyId: string
+  seriesId: string
+  imageIds: string[]
+}
 
-export type removingQueueItem = string;
+export type removingQueueItem = string
 
 /**
  * An item of the download queue
  * @typedef {Object} downloadQueueItem
  */
 export type downloadQueueItem = {
-  seriesId: string;
-  imageId: string;
-};
+  studyId: string
+  seriesId: string
+  imageId: string
+}
 
 /**
  * The strategy to use to create the download queue
@@ -22,10 +24,10 @@ export type downloadQueueItem = {
  * @property {string} ALTERNATE - Create a new queue alternating series
  */
 export enum strategies {
-  CONCAT = "CONCAT",
-  ALTERNATE = "ALTERNATE"
+  CONCAT = 'CONCAT',
+  ALTERNATE = 'ALTERNATE'
 }
 
 export type seriesData = {
-  [seriesId: string]: { numberOfImages: number; isDownloading: boolean };
-};
+  [seriesId: string]: { numberOfImages: number; isDownloading: boolean }
+}
