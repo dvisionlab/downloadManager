@@ -5,9 +5,15 @@ Run this followed commands:
 # Install dependencies (only the first time)
 yarn install
 
-# Run the local server at localhost:8080
-yarn run dev
+# Develop with hot reload
+yarn dev
 
 # Build for production in the dist/ directory
-yarn run build
+yarn build
+
+# Generate documentation in the docs/ folder
+yarn docs
+
+# Run tests with jest
+yarn test
 ```
