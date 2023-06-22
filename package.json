@@ -2,7 +2,7 @@
   "name": "dv_download_manager",
   "repository": "#",
   "version": "0.1.0",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "webpack --config ./bundler/webpack.prod.js",
     "dev": "webpack serve --config ./bundler/webpack.dev.js",
