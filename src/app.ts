@@ -43,9 +43,9 @@ function generateImageIds(seriesId: string, numberOfImages: number = 10) {
   return imageIds;
 }
 
-function add(serieId: string, numberOfImages: number) {
+function add(serieId: string, studyId: string, numberOfImages: number) {
   console.log("add", serieId);
-  dm.addSeries(serieId, generateImageIds(serieId, numberOfImages));
+  dm.addSeries(serieId, studyId, generateImageIds(serieId, numberOfImages));
   updateIsDownloading(dm.isDownloading);
   updateStatus(dm.getOverallStatus());
 }

@@ -81,7 +81,7 @@ export class DownloadManager {
    * Add a new series in the download manager
    * @returns True if the series was added, false otherwise
    */
-  addSeries(seriesId: string, imageIds: string[]) {
+  addSeries(seriesId: string, studyId: string, imageIds: string[]) {
     // check that the series is not already in the seriesData
     // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
     if (seriesId in this.seriesData) {
@@ -91,6 +91,7 @@ export class DownloadManager {
     // otherwise add it to the adding queue
     this.addingQueue.push({
       seriesId: seriesId,
+      studyId: studyId,
       imageIds: imageIds
     });
     this.seriesData[seriesId] = {
