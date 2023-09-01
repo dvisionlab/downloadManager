@@ -2,7 +2,7 @@ import "./style.css";
 
 import { DownloadManager } from "./downloadManager";
 
-const dm = new DownloadManager("concat", true);
+const dm = new DownloadManager("alternate", true);
 
 console.log("dm", dm);
 
@@ -43,9 +43,19 @@ function generateImageIds(seriesId: string, numberOfImages: number = 10) {
   return imageIds;
 }
 
-function add(serieId: string, studyId: string, numberOfImages: number) {
+function add(
+  key: string,
+  serieId: string,
+  studyId: string,
+  numberOfImages: number
+) {
   console.log("add", serieId);
-  dm.addSeries(serieId, studyId, generateImageIds(serieId, numberOfImages));
+  dm.addSeries(
+    key,
+    serieId,
+    studyId,
+    generateImageIds(serieId, numberOfImages)
+  );
   updateIsDownloading(dm.isDownloading);
   updateStatus(dm.getOverallStatus());
 }

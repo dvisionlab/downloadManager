@@ -64,15 +64,15 @@ export class DownloadManager {
   }
 
   private updateIsDownloading(slot: downloadQueueItem[]) {
-    const seriesIds = new Set(slot.map(item => item.seriesId));
-    [...seriesIds].forEach(seriesId => {
+    const keysIds = new Set(slot.map(item => item.key));
+    [...keysIds].forEach(key => {
       const remaining = this.downloadQueue.filter(
-        item => item.seriesId === seriesId
+        item => item.key === key
       ).length;
       if (remaining === 0) {
-        delete this.seriesData[seriesId];
+        delete this.seriesData[key];
       } else {
-        this.seriesData[seriesId].isDownloading = true;
+        this.seriesData[key].isDownloading = true;
       }
     });
   }
@@ -81,7 +81,12 @@ export class DownloadManager {
    * Add a new series in the download manager
    * @returns True if the series was added, false otherwise
    */
-  addSeries(seriesId: string, studyId: string, imageIds: string[]) {
+  addSeries(
+    key: string,
+    seriesId: string,
+    studyId: string,
+    imageIds: string[]
+  ) {
     // check that the series is not already in the seriesData
     // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
     if (seriesId in this.seriesData) {
@@ -90,28 +95,27 @@ export class DownloadManager {
     }
     // otherwise add it to the adding queue
     this.addingQueue.push({
+      key: key,
       seriesId: seriesId,
       studyId: studyId,
       imageIds: imageIds
     });
-    this.seriesData[seriesId] = {
+    this.seriesData[key] = {
       numberOfImages: imageIds.length,
       isDownloading: false
     };
-    this.seriesData[seriesId].numberOfImages = imageIds.length;
-    this.seriesData[seriesId].isDownloading = false;
+    this.seriesData[key].numberOfImages = imageIds.length;
+    this.seriesData[key].isDownloading = false;
     this.reworkQueue();
     return true;
   }
 
   // TODO return boolean if series was removed
-  removeSeries(seriesId: string) {
+  removeSeries(key: string) {
     // directly remove from download queue (you don't add and remove the same series in the same time)
-    this.addingQueue = this.addingQueue.filter(
-      item => item.seriesId !== seriesId
-    );
-    this.removingQueue.push(seriesId);
-    delete this.seriesData[seriesId];
+    this.addingQueue = this.addingQueue.filter(item => item.key !== key);
+    this.removingQueue.push(key);
+    delete this.seriesData[key];
     this.reworkQueue();
   }
 
@@ -125,10 +129,8 @@ export class DownloadManager {
     this.freeze = true;
 
     // apply "remove" modifications
-    this.removingQueue.forEach(seriesId => {
-      this.downloadQueue = this.downloadQueue.filter(
-        item => item.seriesId !== seriesId
-      );
+    this.removingQueue.forEach(key => {
+      this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
     });
 
     // apply "add" modifications
@@ -149,11 +151,11 @@ export class DownloadManager {
   /**
    * Returns the status of the requested series
    */
-  getStatus(seriesId: string) {
+  getStatus(key: string) {
     const remaining = this.downloadQueue.filter(
-      item => item.seriesId === seriesId
+      item => item.key === key
     ).length;
-    const initial = this.seriesData[seriesId]?.numberOfImages;
+    const initial = this.seriesData[key]?.numberOfImages;
     return remaining ? { remaining, initial } : null;
   }
 
@@ -161,9 +163,11 @@ export class DownloadManager {
    * Returns the status of all series
    */
   getOverallStatus() {
-    const seriesIds = Object.keys(this.seriesData);
+    const keys = Object.keys(this.seriesData);
     const obj = Object.fromEntries(
-      seriesIds.map((key, index) => [key, this.getStatus(key)])
+      keys.map((key, index) => {
+        return [key, this.getStatus(key)];
+      })
     );
     return obj;
   }
@@ -185,7 +189,7 @@ export class DownloadManager {
   }
 
   async getNextSlotAsync(slotDimension: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<downloadQueueItem[]>((resolve, reject) => {
       const interval = setInterval(() => {
         const nextSlot = this.getNextSlot(slotDimension);
         if (nextSlot) {

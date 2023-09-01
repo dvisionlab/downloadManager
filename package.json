@@ -9,7 +9,8 @@
     "test": "jest",
     "docs": "typedoc --out ./docs ./src/downloadManager.ts"
   },
-  "main": "src/index.ts",
+  "main": "dist/downloadManager.js",
+  "_tsMain": "src/index.ts",
   "dependencies": {
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.4",
