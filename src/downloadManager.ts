@@ -189,7 +189,7 @@ export class DownloadManager {
   }
 
   async getNextSlotAsync(slotDimension: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<downloadQueueItem[]>((resolve, reject) => {
       const interval = setInterval(() => {
         const nextSlot = this.getNextSlot(slotDimension);
         if (nextSlot) {
