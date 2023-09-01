@@ -57,9 +57,10 @@ __webpack_require__.d(__webpack_exports__, {
  * Concatenate the adding queue to the download queue
  */
 function concat(adding, actual) {
-    adding.forEach((item) => {
-        item.imageIds.forEach((imageId) => {
+    adding.forEach(item => {
+        item.imageIds.forEach(imageId => {
             actual.push({
+                key: item.key,
                 studyId: item.studyId,
                 seriesId: item.seriesId,
                 imageId: imageId
@@ -73,11 +74,12 @@ function concat(adding, actual) {
  */
 function alternate(adding, actual) {
     let newQueue = [];
-    let seriesIds = new Set(actual.map((item) => item.seriesId));
-    adding.forEach((item) => seriesIds.add(item.seriesId));
-    let seriesIdsArray = Array.from(seriesIds);
+    let keys = new Set(actual.map(item => item.key));
+    adding.forEach(item => keys.add(item.key));
+    let keysArray = Array.from(keys);
     let addingObjectsArray = adding
-        .map((object) => object.imageIds.map((imageId) => ({
+        .map(object => object.imageIds.map(imageId => ({
+        key: object.key,
         studyId: object.studyId,
         seriesId: object.seriesId,
         imageId
@@ -86,11 +88,11 @@ function alternate(adding, actual) {
     let allImages = addingObjectsArray.concat(actual);
     let numberOfTotalImages = allImages.length;
     for (let i = 0; i < numberOfTotalImages; i++) {
-        let seriesToPush = seriesIdsArray[i % seriesIds.size];
-        let imageToPushIndex = allImages.findIndex((item) => item.seriesId === seriesToPush);
+        let seriesToPush = keysArray[i % keys.size];
+        let imageToPushIndex = allImages.findIndex(item => item.key === seriesToPush);
         let imageToPush = allImages.splice(imageToPushIndex, 1).pop();
         if (!imageToPush) {
-            throw new Error('imageToPush is undefined');
+            throw new Error("imageToPush is undefined");
         }
         newQueue.push(imageToPush);
     }
@@ -151,14 +153,14 @@ class DownloadManager {
         return (Object.values(this.seriesData).reduce((acc, curr) => curr.isDownloading || acc, false) && this.downloadQueue.length > 0);
     }
     updateIsDownloading(slot) {
-        const seriesIds = new Set(slot.map(item => item.seriesId));
-        [...seriesIds].forEach(seriesId => {
-            const remaining = this.downloadQueue.filter(item => item.seriesId === seriesId).length;
+        const keysIds = new Set(slot.map(item => item.key));
+        [...keysIds].forEach(key => {
+            const remaining = this.downloadQueue.filter(item => item.key === key).length;
             if (remaining === 0) {
-                delete this.seriesData[seriesId];
+                delete this.seriesData[key];
             }
             else {
-                this.seriesData[seriesId].isDownloading = true;
+                this.seriesData[key].isDownloading = true;
             }
         });
     }
@@ -166,7 +168,7 @@ class DownloadManager {
      * Add a new series in the download manager
      * @returns True if the series was added, false otherwise
      */
-    addSeries(seriesId, studyId, imageIds) {
+    addSeries(key, seriesId, studyId, imageIds) {
         // check that the series is not already in the seriesData
         // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
         if (seriesId in this.seriesData) {
@@ -175,25 +177,26 @@ class DownloadManager {
         }
         // otherwise add it to the adding queue
         this.addingQueue.push({
+            key: key,
             seriesId: seriesId,
             studyId: studyId,
             imageIds: imageIds
         });
-        this.seriesData[seriesId] = {
+        this.seriesData[key] = {
             numberOfImages: imageIds.length,
             isDownloading: false
         };
-        this.seriesData[seriesId].numberOfImages = imageIds.length;
-        this.seriesData[seriesId].isDownloading = false;
+        this.seriesData[key].numberOfImages = imageIds.length;
+        this.seriesData[key].isDownloading = false;
         this.reworkQueue();
         return true;
     }
     // TODO return boolean if series was removed
-    removeSeries(seriesId) {
+    removeSeries(key) {
         // directly remove from download queue (you don't add and remove the same series in the same time)
-        this.addingQueue = this.addingQueue.filter(item => item.seriesId !== seriesId);
-        this.removingQueue.push(seriesId);
-        delete this.seriesData[seriesId];
+        this.addingQueue = this.addingQueue.filter(item => item.key !== key);
+        this.removingQueue.push(key);
+        delete this.seriesData[key];
         this.reworkQueue();
     }
     /**
@@ -205,8 +208,8 @@ class DownloadManager {
         // block requests
         this.freeze = true;
         // apply "remove" modifications
-        this.removingQueue.forEach(seriesId => {
-            this.downloadQueue = this.downloadQueue.filter(item => item.seriesId !== seriesId);
+        this.removingQueue.forEach(key => {
+            this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
         });
         // apply "add" modifications
         this.downloadQueue = strategies[this.strategy](this.addingQueue, this.downloadQueue);
@@ -220,18 +223,20 @@ class DownloadManager {
     /**
      * Returns the status of the requested series
      */
-    getStatus(seriesId) {
+    getStatus(key) {
         var _a;
-        const remaining = this.downloadQueue.filter(item => item.seriesId === seriesId).length;
-        const initial = (_a = this.seriesData[seriesId]) === null || _a === void 0 ? void 0 : _a.numberOfImages;
+        const remaining = this.downloadQueue.filter(item => item.key === key).length;
+        const initial = (_a = this.seriesData[key]) === null || _a === void 0 ? void 0 : _a.numberOfImages;
         return remaining ? { remaining, initial } : null;
     }
     /**
      * Returns the status of all series
      */
     getOverallStatus() {
-        const seriesIds = Object.keys(this.seriesData);
-        const obj = Object.fromEntries(seriesIds.map((key, index) => [key, this.getStatus(key)]));
+        const keys = Object.keys(this.seriesData);
+        const obj = Object.fromEntries(keys.map((key, index) => {
+            return [key, this.getStatus(key)];
+        }));
         return obj;
     }
     /**
