@@ -9,7 +9,7 @@
     "test": "jest",
     "docs": "typedoc --out ./docs ./src/downloadManager.ts"
   },
-  "main": "dist/downloadManager.js",
+  "main": "dist/dvDownloadManager.js",
   "_tsMain": "src/index.ts",
   "dependencies": {
     "@babel/core": "^7.22.1",
