@@ -1,4 +1,4 @@
-import type { addingQueueItem, downloadQueueItem } from "./types.d";
+import type { addingQueueItem, downloadQueueItem } from "./types";
 
 /**
  * Concatenate the adding queue to the download queue
