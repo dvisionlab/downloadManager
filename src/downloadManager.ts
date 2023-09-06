@@ -3,7 +3,7 @@ import type {
   addingQueueItem,
   removingQueueItem,
   seriesData
-} from "./types.d";
+} from "./types";
 
 import strategiesFns from "./strategies";
 

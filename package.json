@@ -1,19 +1,19 @@
 {
   "name": "dv-download-manager",
   "repository": "https://github.com/dvisionlab/downloadManager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config ./bundler/webpack.prod.js",
+    "build": "tsc",
     "dev": "webpack serve --config ./bundler/webpack.dev.js",
     "test": "jest",
-    "docs": "typedoc --out ./docs ./src/downloadManager.ts"
+    "docs": "typedoc --out ./docs ./src/index.ts"
   },
-  "main": "dist/dvDownloadManager.js",
-  "_tsMain": "src/index.ts",
+  "main": "dist/index.js",
   "dependencies": {
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.4",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.2.3",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.4",
@@ -43,5 +43,8 @@
   "author": {
     "name": "ronzim",
     "email": "mattia.ronzoni@dvisionlab.com"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
