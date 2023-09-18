@@ -36,7 +36,7 @@ function updateStatus(content: {
 // functions to test the download manager:
 
 function generateImageIds(seriesId: string, numberOfImages: number = 10) {
-  const imageIds = [];
+  const imageIds = [] as string[];
   for (let i = 0; i < numberOfImages; i++) {
     imageIds.push(`${seriesId}image${i}`);
   }

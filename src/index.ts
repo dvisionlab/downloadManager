@@ -64,15 +64,15 @@ export class DownloadManager {
   }
 
   private updateIsDownloading(slot: downloadQueueItem[]) {
-    const seriesIds = new Set(slot.map(item => item.seriesId));
-    [...seriesIds].forEach(seriesId => {
+    const keysIds = new Set(slot.map(item => item.key));
+    [...keysIds].forEach(key => {
       const remaining = this.downloadQueue.filter(
-        item => item.seriesId === seriesId
+        item => item.key === key
       ).length;
       if (remaining === 0) {
-        delete this.seriesData[seriesId];
+        delete this.seriesData[key];
       } else {
-        this.seriesData[seriesId].isDownloading = true;
+        this.seriesData[key].isDownloading = true;
       }
     });
   }
