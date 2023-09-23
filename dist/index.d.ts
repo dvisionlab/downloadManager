@@ -75,5 +75,5 @@ export declare class DownloadManager {
      * @returns {array<downloadQueueItem>}
      */
     getNextSlot(slotDimension: number): downloadQueueItem[] | null;
-    getNextSlotAsync(slotDimension: number): Promise<unknown>;
+    getNextSlotAsync(slotDimension: number): Promise<downloadQueueItem[]>;
 }

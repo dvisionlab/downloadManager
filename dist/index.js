@@ -56,14 +56,14 @@ class DownloadManager {
         return (Object.values(this.seriesData).reduce((acc, curr) => curr.isDownloading || acc, false) && this.downloadQueue.length > 0);
     }
     updateIsDownloading(slot) {
-        const seriesIds = new Set(slot.map(item => item.seriesId));
-        [...seriesIds].forEach(seriesId => {
-            const remaining = this.downloadQueue.filter(item => item.seriesId === seriesId).length;
+        const keysIds = new Set(slot.map(item => item.key));
+        [...keysIds].forEach(key => {
+            const remaining = this.downloadQueue.filter(item => item.key === key).length;
             if (remaining === 0) {
-                delete this.seriesData[seriesId];
+                delete this.seriesData[key];
             }
             else {
-                this.seriesData[seriesId].isDownloading = true;
+                this.seriesData[key].isDownloading = true;
             }
         });
     }
