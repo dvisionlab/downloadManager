@@ -77,4 +77,63 @@ function alternate(
   return newQueue;
 }
 
-export default { concat, alternate };
+/**
+ * Create a new queue, using the "propagation" strategy
+ */
+function propagate(
+  adding: addingQueueItem[],
+  actual: downloadQueueItem[],
+  active: string | null
+) {
+  // add new series and sort by active
+  let queue = concat(adding, actual, active);
+
+  // get last index of active series in queue array
+  // TODO: using custom function even if the same exist in ES2023, because tsc doesn't like it
+  let activeLastIndex = findLastIndex(queue, item => item.key === active);
+
+  // get active series subarray
+  let activeSubArray = queue.slice(0, activeLastIndex);
+  let orderedSubArray = orderArrayFromCenter(activeSubArray);
+
+  // replace active series subarray with ordered subarray
+  queue.splice(0, activeSubArray.length, ...orderedSubArray);
+
+  return queue;
+}
+
+/// utils ///
+
+function findLastIndex<T>(arr: T[], testFn: (element: T) => boolean): number {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (testFn(arr[i])) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function orderArrayFromCenter<T>(arr: T[]): T[] {
+  const centerIndex = Math.floor(arr.length / 2);
+  // Start with the center element
+  const resultArray: T[] = [arr[centerIndex]];
+
+  let leftIndex = centerIndex - 1;
+  let rightIndex = centerIndex + 1;
+
+  while (leftIndex >= 0 || rightIndex < arr.length) {
+    if (rightIndex < arr.length) {
+      resultArray.push(arr[rightIndex]);
+      rightIndex++;
+    }
+
+    if (leftIndex >= 0) {
+      resultArray.push(arr[leftIndex]);
+      leftIndex--;
+    }
+  }
+
+  return resultArray;
+}
+
+export default { concat, alternate, propagate };

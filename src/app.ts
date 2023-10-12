@@ -2,7 +2,7 @@ import "./style.css";
 
 import { DownloadManager } from "./downloadManager";
 
-const strategy = "concat";
+const strategy = "propagate";
 const verbose = true;
 const dm = new DownloadManager(strategy, verbose);
 
@@ -113,6 +113,12 @@ async function getNextSlot() {
   console.log("next slot", ns);
   updateIsDownloading(dm.isDownloading);
   updateStatus(dm.getOverallStatus());
+  // maybe the active series is changed, update the button
+  if (dm.activeSeries) {
+    const activeBtn = document.getElementById(dm.activeSeries);
+    if (activeBtn) activeBtn.style.backgroundColor = "yellow";
+    clearOtherButtons(dm.activeSeries);
+  }
 }
 
 // @ts-ignore
