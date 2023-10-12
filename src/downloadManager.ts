@@ -39,6 +39,10 @@ export class DownloadManager {
    * The data of the series in the download manager, used to keep track of download progress
    */
   private seriesData: seriesData = {};
+  /**
+   * The active serie (for strategies that react to user behaviour)
+   */
+  private active: string | null = null;
 
   constructor(
     strategy: keyof typeof strategiesFns = "concat",
@@ -63,6 +67,34 @@ export class DownloadManager {
     );
   }
 
+  /**
+   * Get verbose
+   */
+  get isVerbose() {
+    return this.verbose;
+  }
+
+  /**
+   * Set active series
+   */
+  set activeSeries(key: string | null) {
+    // TODO should we check that reworking is ongoing (freeze = true) ?
+    // TODO check that key is in the download queue
+    this.active = key;
+    this.reworkQueue();
+  }
+
+  /**
+   * Get active series
+   */
+  get activeSeries() {
+    return this.active || null;
+  }
+
+  /**
+   * Update the isDownloading property of the seriesData
+   * @param slot The slot of images that was just popped from the download queue
+   */
   private updateIsDownloading(slot: downloadQueueItem[]) {
     const keysIds = new Set(slot.map(item => item.key));
     [...keysIds].forEach(key => {
@@ -133,11 +165,25 @@ export class DownloadManager {
       this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
     });
 
+    // check that the active series is still in the download queue
+    if (
+      this.active &&
+      !this.downloadQueue.some(item => item.key === this.active)
+    ) {
+      this.active = null;
+    }
+
     // apply "add" modifications
     this.downloadQueue = strategiesFns[this.strategy](
       this.addingQueue,
-      this.downloadQueue
+      this.downloadQueue,
+      this.active
     );
+
+    // if active is null, set it to the first key in the download queue
+    if (!this.active && this.downloadQueue.length > 0) {
+      this.active = this.downloadQueue[0].key;
+    }
 
     this.addingQueue = [];
     this.removingQueue = [];

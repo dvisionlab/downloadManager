@@ -39,6 +39,10 @@ export class DownloadManager {
    * The data of the series in the download manager, used to keep track of download progress
    */
   private seriesData: seriesData = {};
+  /**
+   * The active serie (for strategies that react to user behaviour)
+   */
+  private active: string | null = null;
 
   constructor(
     strategy: keyof typeof strategiesFns = "concat",
@@ -63,16 +67,37 @@ export class DownloadManager {
     );
   }
 
+  /**
+   * Set active series
+   */
+  set activeSeries(key: string | null) {
+    // TODO check that key is in the download queue
+    this.active = key;
+    // TODO add a strategy that prioritizes the active series
+    this.reworkQueue();
+  }
+
+  /**
+   * Get active series
+   */
+  get activeSeries() {
+    return this.active || null;
+  }
+
+  /**
+   * Update the isDownloading property of the seriesData
+   * @param slot The slot of images that was just popped from the download queue
+   */
   private updateIsDownloading(slot: downloadQueueItem[]) {
-    const seriesIds = new Set(slot.map(item => item.seriesId));
-    [...seriesIds].forEach(seriesId => {
+    const keysIds = new Set(slot.map(item => item.key));
+    [...keysIds].forEach(key => {
       const remaining = this.downloadQueue.filter(
-        item => item.seriesId === seriesId
+        item => item.key === key
       ).length;
       if (remaining === 0) {
-        delete this.seriesData[seriesId];
+        delete this.seriesData[key];
       } else {
-        this.seriesData[seriesId].isDownloading = true;
+        this.seriesData[key].isDownloading = true;
       }
     });
   }
@@ -136,7 +161,8 @@ export class DownloadManager {
     // apply "add" modifications
     this.downloadQueue = strategiesFns[this.strategy](
       this.addingQueue,
-      this.downloadQueue
+      this.downloadQueue,
+      this.active
     );
 
     this.addingQueue = [];
@@ -189,7 +215,7 @@ export class DownloadManager {
   }
 
   async getNextSlotAsync(slotDimension: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<downloadQueueItem[]>((resolve, reject) => {
       const interval = setInterval(() => {
         const nextSlot = this.getNextSlot(slotDimension);
         if (nextSlot) {

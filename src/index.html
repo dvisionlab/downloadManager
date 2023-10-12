@@ -19,28 +19,82 @@
   <body>
     <div id="bar" class="input-group m-1"></div>
     <div class="m-4">
-      <h1>
-        isDowloading: <span id="isDownloading" style="color: red">false</span>
-      </h1>
+      <h3>
+        isDownloading:
+        <span id="isDownloading" style="color: rgb(57, 96, 175)">false</span>
+      </h3>
+      <h3>
+        strategy:
+        <span id="strategy" style="color: rgb(57, 96, 175)"></span>
+      </h3>
+      <h3>
+        verbose:
+        <span id="verbose" style="color: rgb(57, 96, 175)"></span>
+      </h3>
     </div>
     <div class="m-4">
-      <button onclick='add("k1", "1", "A",  10)'>
+      <button
+        type="button"
+        class="btn btn-success btn-sm"
+        onclick='add("k1", "1", "A",  10)'
+      >
         Add series1 (10 images)
       </button>
-      <button onclick='add("k2", "2", "B", 7)'>Add series2 (7 images)</button>
-      <button onclick='add("k3", "3", "C", 8)'>Add series3 (8 images)</button>
+      <button
+        type="button"
+        class="btn btn-success btn-sm"
+        onclick='add("k2", "2", "B", 7)'
+      >
+        Add series2 (7 images)
+      </button>
+      <button
+        type="button"
+        class="btn btn-success btn-sm"
+        onclick='add("k3", "3", "C", 8)'
+      >
+        Add series3 (8 images)
+      </button>
     </div>
     <div class="m-4">
-      <button onclick='remove("k1")'>Remove series1</button>
-      <button onclick='remove("k2")'>Remove series2</button>
-      <button onclick='remove("k3")'>Remove series3</button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        onclick='remove("k1")'
+      >
+        Remove series1
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        onclick='remove("k2")'
+      >
+        Remove series2
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger btn-sm"
+        onclick='remove("k3")'
+      >
+        Remove series3
+      </button>
     </div>
     <div class="m-4">
-      <button onclick="getNextSlot()">Get next slot</button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-sm"
+        onclick="getNextSlot()"
+      >
+        Get next slot
+      </button>
     </div>
     <div class="m-4">
       <h3>status:</h3>
-      <ul id="status" style="list-style-type: disclosure-closed"></ul>
+      <div id="series-container" class="container-fluid"></div>
+      <ul
+        id="status"
+        class="mt-4"
+        style="list-style-type: disclosure-closed"
+      ></ul>
     </div>
   </body>
 </html>

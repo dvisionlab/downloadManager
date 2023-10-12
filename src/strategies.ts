@@ -3,7 +3,11 @@ import type { addingQueueItem, downloadQueueItem } from "./types";
 /**
  * Concatenate the adding queue to the download queue
  */
-function concat(adding: addingQueueItem[], actual: downloadQueueItem[]) {
+function concat(
+  adding: addingQueueItem[],
+  actual: downloadQueueItem[],
+  active: string | null
+) {
   adding.forEach(item => {
     item.imageIds.forEach(imageId => {
       actual.push({
@@ -14,13 +18,27 @@ function concat(adding: addingQueueItem[], actual: downloadQueueItem[]) {
       });
     });
   });
+
+  // if active, sort by key
+  if (active) {
+    actual.sort((a, b) => {
+      if (b.key == active && a.key !== active) return 1;
+      if (a.key == active && b.key !== active) return -1;
+      return 0;
+    });
+  }
+
   return actual;
 }
 
 /**
  * Create a new queue alternating series
  */
-function alternate(adding: addingQueueItem[], actual: downloadQueueItem[]) {
+function alternate(
+  adding: addingQueueItem[],
+  actual: downloadQueueItem[],
+  active: string | null
+) {
   let newQueue: downloadQueueItem[] = [];
 
   let keys = new Set(actual.map(item => item.key));
