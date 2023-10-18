@@ -16,7 +16,7 @@ function concat(
         studyId: item.studyId,
         seriesId: item.seriesId,
         imageId: imageId,
-        originalIndex: index
+        originalIndex: index + 1
       });
     });
   });

@@ -1,5 +1,3 @@
-import "./style.css";
-
 import { DownloadManager } from "./downloadManager";
 
 const strategy = "threeParted";
