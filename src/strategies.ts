@@ -164,9 +164,6 @@ function threeParted(
   qs[0] = q1.length;
   qs[1] = q1.length + q2.length;
 
-  console.log(q1.length, q2.length, q3.length);
-  console.log("qs", qs[0], qs[1]);
-
   const queue = q1.concat(q2).concat(q3);
   return queue;
 }

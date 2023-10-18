@@ -49,13 +49,6 @@ export class DownloadManager {
   private _activeIndex: number | null = null;
 
   /**
-   * The three sections of the download queue (first slices, active series, other series)
-   */
-  private q1: downloadQueueItem[] = [];
-  private q2: downloadQueueItem[] = [];
-  private q3: downloadQueueItem[] = [];
-
-  /**
    * The indeces that delimits the three sections of the download queue
    */
   private qs: [number, number] = [0, 0];

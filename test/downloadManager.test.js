@@ -1,4 +1,5 @@
 import data from "./data.json";
+
 const { DownloadManager } = require("../src/downloadManager");
 
 function generateImageIds(seriesId, count = 10) {
