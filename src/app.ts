@@ -2,14 +2,14 @@ import "./style.css";
 
 import { DownloadManager } from "./downloadManager";
 
-const strategy = "propagate";
+const strategy = "threeParted";
 const verbose = true;
 const dm = new DownloadManager(strategy, verbose);
 
 const strategyLabel = document.getElementById("strategy");
 strategyLabel!.innerHTML = strategy;
 const verboseLabel = document.getElementById("verbose");
-verboseLabel!.innerHTML = dm.isVerbose.toString();
+verboseLabel!.innerHTML = dm.verbose.toString();
 
 console.log("dm", dm);
 
@@ -37,6 +37,21 @@ function updateStatus(content: {
       li.innerText = "series " + key + " >>> " + JSON.stringify(content[key]);
       list.appendChild(li);
     }
+  }
+}
+
+function updateActiveIndex(index: string) {
+  const element = document.getElementById("indexlabel");
+  if (element) {
+    element.innerHTML = `activeIndex: ${index.toString()}`;
+  }
+  dm.activeIndex = parseInt(index);
+}
+
+function updateIndex(index: string) {
+  const element = document.getElementById("sliderlabel");
+  if (element) {
+    element.innerHTML = `Index: ${index.toString()} |`;
   }
 }
 
@@ -69,7 +84,7 @@ function appendButton(key: string) {
     // make the button green
     button.style.backgroundColor = "yellow";
     clearOtherButtons(key);
-    dm.activeSeries = key;
+    dm.activeKey = key;
   };
   const container = document.getElementById("series-container");
   container!.appendChild(button);
@@ -101,10 +116,10 @@ function remove(key: string) {
   updateIsDownloading(dm.isDownloading);
   updateStatus(dm.getOverallStatus());
   // maybe the active series is changed, update the button
-  if (dm.activeSeries) {
-    const activeBtn = document.getElementById(dm.activeSeries);
+  if (dm.activeKey) {
+    const activeBtn = document.getElementById(dm.activeKey);
     if (activeBtn) activeBtn.style.backgroundColor = "yellow";
-    clearOtherButtons(dm.activeSeries);
+    clearOtherButtons(dm.activeKey);
   }
 }
 
@@ -114,10 +129,10 @@ async function getNextSlot() {
   updateIsDownloading(dm.isDownloading);
   updateStatus(dm.getOverallStatus());
   // maybe the active series is changed, update the button
-  if (dm.activeSeries) {
-    const activeBtn = document.getElementById(dm.activeSeries);
+  if (dm.activeKey) {
+    const activeBtn = document.getElementById(dm.activeKey);
     if (activeBtn) activeBtn.style.backgroundColor = "yellow";
-    clearOtherButtons(dm.activeSeries);
+    clearOtherButtons(dm.activeKey);
   }
 }
 
@@ -129,3 +144,7 @@ window.add = add;
 window.remove = remove;
 // @ts-ignore
 window.getNextSlot = getNextSlot;
+// @ts-ignore
+window.updateIndex = updateIndex;
+// @ts-ignore
+window.updateActiveIndex = updateActiveIndex;

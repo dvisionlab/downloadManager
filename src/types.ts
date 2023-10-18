@@ -16,6 +16,7 @@ export type downloadQueueItem = {
   studyId: string;
   seriesId: string;
   imageId: string;
+  originalIndex?: number;
 };
 
 /**
@@ -28,6 +29,7 @@ export type downloadQueueItem = {
 export enum strategies {
   CONCAT = "CONCAT",
   ALTERNATE = "ALTERNATE"
+  // TODO update
 }
 
 export type seriesData = {

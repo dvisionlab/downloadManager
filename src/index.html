@@ -86,6 +86,25 @@
       >
         Get next slot
       </button>
+      <!-- add a slider  -->
+      <input
+        type="range"
+        class="form-range mt-2"
+        min="0"
+        max="10"
+        step="1"
+        id="sliderindex"
+        value="0"
+        onchange="updateActiveIndex(this.value)"
+        oninput="updateIndex(this.value)"
+      />
+      <!-- add a label for the slider that updates on slider changes -->
+      <label id="sliderlabel" for="sliderindex" class="form-label mt-2"
+        >Index: 0 |
+      </label>
+      <label id="indexlabel" for="sliderindex" class="form-label"
+        >activeIndex: null</label
+      >
     </div>
     <div class="m-4">
       <h3>status:</h3>

@@ -34,7 +34,7 @@ export class DownloadManager {
   /**
    * If true, the download manager will log to the console
    */
-  private verbose: boolean = false;
+  private _verbose: boolean = false;
   /**
    * The data of the series in the download manager, used to keep track of download progress
    */
@@ -42,14 +42,35 @@ export class DownloadManager {
   /**
    * The active serie (for strategies that react to user behaviour)
    */
-  private active: string | null = null;
+  private _activeKey: string | null = null;
+  /**
+   * The active index (for strategies that react to user behaviour)
+   */
+  private _activeIndex: number | null = null;
 
+  /**
+   * The three sections of the download queue (first slices, active series, other series)
+   */
+  private q1: downloadQueueItem[] = [];
+  private q2: downloadQueueItem[] = [];
+  private q3: downloadQueueItem[] = [];
+
+  /**
+   * The indeces that delimits the three sections of the download queue
+   */
+  private qs: [number, number] = [0, 0];
+
+  /**
+   * Class constructor
+   * @param strategy Sets the strategy
+   * @param verbose Enables logging
+   */
   constructor(
     strategy: keyof typeof strategiesFns = "concat",
     verbose?: boolean
   ) {
     this.strategy = strategy;
-    this.verbose = verbose ?? false;
+    this._verbose = verbose ?? false;
   }
 
   /**
@@ -67,21 +88,28 @@ export class DownloadManager {
     );
   }
 
-  /**
-   * Set active series
-   */
-  set activeSeries(key: string | null) {
+  get verbose() {
+    return this._verbose;
+  }
+
+  set activeKey(key: string | null) {
+    // TODO should we check that reworking is ongoing (freeze = true) ?
     // TODO check that key is in the download queue
-    this.active = key;
-    // TODO add a strategy that prioritizes the active series
+    this._activeKey = key;
     this.reworkQueue();
   }
 
-  /**
-   * Get active series
-   */
-  get activeSeries() {
-    return this.active || null;
+  get activeKey() {
+    return this._activeKey;
+  }
+
+  set activeIndex(index: number | null) {
+    this._activeIndex = index;
+    this.reworkQueue();
+  }
+
+  get activeIndex() {
+    return this._activeIndex;
   }
 
   /**
@@ -158,12 +186,27 @@ export class DownloadManager {
       this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
     });
 
+    // check that the active series is still in the download queue
+    if (
+      this._activeKey &&
+      !this.downloadQueue.some(item => item.key === this._activeKey)
+    ) {
+      this._activeKey = null;
+    }
+
     // apply "add" modifications
     this.downloadQueue = strategiesFns[this.strategy](
       this.addingQueue,
       this.downloadQueue,
-      this.active
+      this._activeKey,
+      this._activeIndex,
+      this.qs
     );
+
+    // if active is null, set it to the first key in the download queue
+    if (!this._activeKey && this.downloadQueue.length > 0) {
+      this._activeKey = this.downloadQueue[0].key;
+    }
 
     this.addingQueue = [];
     this.removingQueue = [];
