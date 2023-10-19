@@ -18,6 +18,11 @@ const strategies_1 = __importDefault(require("./strategies"));
  * DownloadManager class
  */
 class DownloadManager {
+    /**
+     * Class constructor
+     * @param strategy Sets the strategy
+     * @param verbose Enables logging
+     */
     constructor(strategy = "concat", verbose) {
         /**
          * The real download queue
@@ -38,13 +43,25 @@ class DownloadManager {
         /**
          * If true, the download manager will log to the console
          */
-        this.verbose = false;
+        this._verbose = false;
         /**
          * The data of the series in the download manager, used to keep track of download progress
          */
         this.seriesData = {};
+        /**
+         * The active serie (for strategies that react to user behaviour)
+         */
+        this._activeKey = null;
+        /**
+         * The active index (for strategies that react to user behaviour)
+         */
+        this._activeIndex = null;
+        /**
+         * The indeces that delimits the three sections of the download queue
+         */
+        this.qs = [0, 0];
         this.strategy = strategy;
-        this.verbose = verbose !== null && verbose !== void 0 ? verbose : false;
+        this._verbose = verbose !== null && verbose !== void 0 ? verbose : false;
     }
     /**
      * Download is on going if there are instances in the download queue
@@ -55,6 +72,34 @@ class DownloadManager {
     get isDownloading() {
         return (Object.values(this.seriesData).reduce((acc, curr) => curr.isDownloading || acc, false) && this.downloadQueue.length > 0);
     }
+    get verbose() {
+        return this._verbose;
+    }
+    set activeKey(key) {
+        // TODO should we check that reworking is ongoing (freeze = true) ?
+        // TODO check that key is in the download queue
+        this._activeKey = key;
+        this._activeIndex = null;
+        this.reworkQueue();
+    }
+    get activeKey() {
+        return this._activeKey;
+    }
+    set activeIndex(index) {
+        if (!this._activeKey) {
+            console.warn("activeKey is not set");
+            return;
+        }
+        this._activeIndex = index;
+        this.reworkQueue();
+    }
+    get activeIndex() {
+        return this._activeIndex;
+    }
+    /**
+     * Update the isDownloading property of the seriesData
+     * @param slot The slot of images that was just popped from the download queue
+     */
     updateIsDownloading(slot) {
         const keysIds = new Set(slot.map(item => item.key));
         [...keysIds].forEach(key => {
@@ -68,13 +113,23 @@ class DownloadManager {
         });
     }
     /**
+     * Update the qs indexes
+     * @param slotDimension The number of images in the slot
+     */
+    updateQs(slotDimension) {
+        this.qs[0] =
+            this.qs[0] - slotDimension > 0 ? this.qs[0] - slotDimension : 0;
+        this.qs[1] =
+            this.qs[1] - slotDimension > 0 ? this.qs[1] - slotDimension : 0;
+    }
+    /**
      * Add a new series in the download manager
      * @returns True if the series was added, false otherwise
      */
     addSeries(key, seriesId, studyId, imageIds) {
         // check that the series is not already in the seriesData
         // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
-        if (seriesId in this.seriesData) {
+        if (key in this.seriesData) {
             console.warn(`Series ${seriesId} is already in the download manager`);
             return false;
         }
@@ -114,12 +169,23 @@ class DownloadManager {
         this.removingQueue.forEach(key => {
             this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
         });
+        // check that the active series is still in the download queue
+        if (this._activeKey &&
+            !this.downloadQueue.some(item => item.key === this._activeKey)) {
+            this._activeKey = null;
+        }
         // apply "add" modifications
-        this.downloadQueue = strategies_1.default[this.strategy](this.addingQueue, this.downloadQueue);
+        this.downloadQueue = strategies_1.default[this.strategy](this.addingQueue, this.downloadQueue, this._activeKey, this._activeIndex, this.qs);
+        // if active is null, set it to the first key in the download queue
+        if (!this._activeKey && this.downloadQueue.length > 0) {
+            this._activeKey = this.downloadQueue[0].key;
+        }
         this.addingQueue = [];
         this.removingQueue = [];
-        if (this.verbose)
-            console.log("downloadQueue", this.downloadQueue);
+        if (this.verbose) {
+            console.log("downloadQueue");
+            console.table(this.downloadQueue);
+        }
         // unblock requests
         this.freeze = false;
     }
@@ -153,9 +219,14 @@ class DownloadManager {
             return null;
         }
         const nextSlot = this.downloadQueue.splice(0, slotDimension);
+        this.updateQs(slotDimension);
         this.updateIsDownloading(nextSlot);
-        if (this.verbose)
-            console.log("nextSlot", nextSlot);
+        if (this.verbose) {
+            console.log("nextSlot");
+            console.table(nextSlot);
+            console.log("downloadQueue");
+            console.table(this.downloadQueue);
+        }
         return nextSlot;
     }
     getNextSlotAsync(slotDimension) {

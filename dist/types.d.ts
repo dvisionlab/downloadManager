@@ -14,6 +14,7 @@ export type downloadQueueItem = {
     studyId: string;
     seriesId: string;
     imageId: string;
+    originalIndex?: number;
 };
 /**
  * The strategy to use to create the download queue
