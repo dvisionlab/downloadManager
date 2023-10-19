@@ -12,5 +12,6 @@ var strategies;
 (function (strategies) {
     strategies["CONCAT"] = "CONCAT";
     strategies["ALTERNATE"] = "ALTERNATE";
+    // TODO update
 })(strategies = exports.strategies || (exports.strategies = {}));
 //# sourceMappingURL=types.js.map

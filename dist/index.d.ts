@@ -27,11 +27,34 @@ export declare class DownloadManager {
     /**
      * If true, the download manager will log to the console
      */
-    private verbose;
+    private _verbose;
     /**
      * The data of the series in the download manager, used to keep track of download progress
      */
     private seriesData;
+    /**
+     * The active serie (for strategies that react to user behaviour)
+     */
+    private _activeKey;
+    /**
+     * The active index (for strategies that react to user behaviour)
+     */
+    private _activeIndex;
+    /**
+     * The three sections of the download queue (first slices, active series, other series)
+     */
+    private q1;
+    private q2;
+    private q3;
+    /**
+     * The indeces that delimits the three sections of the download queue
+     */
+    private qs;
+    /**
+     * Class constructor
+     * @param strategy Sets the strategy
+     * @param verbose Enables logging
+     */
     constructor(strategy?: keyof typeof strategiesFns, verbose?: boolean);
     /**
      * Download is on going if there are instances in the download queue
@@ -40,7 +63,21 @@ export declare class DownloadManager {
      * is popped from the download queue)
      **/
     get isDownloading(): boolean;
+    get verbose(): boolean;
+    set activeKey(key: string | null);
+    get activeKey(): string | null;
+    set activeIndex(index: number | null);
+    get activeIndex(): number | null;
+    /**
+     * Update the isDownloading property of the seriesData
+     * @param slot The slot of images that was just popped from the download queue
+     */
     private updateIsDownloading;
+    /**
+     * Update the qs indexes
+     * @param slotDimension The number of images in the slot
+     */
+    private updateQs;
     /**
      * Add a new series in the download manager
      * @returns True if the series was added, false otherwise
