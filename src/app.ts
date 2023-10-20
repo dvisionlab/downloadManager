@@ -1,7 +1,7 @@
 import { DownloadManager } from "./downloadManager";
 
 const strategy = "threeParted";
-const verbose = true;
+const verbose = false;
 const dm = new DownloadManager(strategy, verbose);
 
 const strategyLabel = document.getElementById("strategy");
@@ -146,3 +146,9 @@ window.getNextSlot = getNextSlot;
 window.updateIndex = updateIndex;
 // @ts-ignore
 window.updateActiveIndex = updateActiveIndex;
+
+setInterval(() => {
+  dm.getNextSlotAsync(1).then(slot => {
+    console.log("slot", slot[0]?.imageId, slot[0]?.originalIndex);
+  });
+}, 2000);
