@@ -49,13 +49,6 @@ export class DownloadManager {
   private _activeIndex: number | null = null;
 
   /**
-   * The three sections of the download queue (first slices, active series, other series)
-   */
-  private q1: downloadQueueItem[] = [];
-  private q2: downloadQueueItem[] = [];
-  private q3: downloadQueueItem[] = [];
-
-  /**
    * The indeces that delimits the three sections of the download queue
    */
   private qs: [number, number] = [0, 0];
@@ -105,10 +98,10 @@ export class DownloadManager {
   }
 
   set activeIndex(index: number | null) {
-    if (!this._activeKey) {
-      console.warn("activeKey is not set");
-      return;
-    }
+    // if (!this._activeKey) {
+    //   console.warn("activeKey is not set");
+    //   return;
+    // }
     this._activeIndex = index;
     this.reworkQueue();
   }
@@ -196,6 +189,7 @@ export class DownloadManager {
   reworkQueue() {
     // block requests
     this.freeze = true;
+    console.time("reworkQueue");
 
     // apply "remove" modifications
     this.removingQueue.forEach(key => {
@@ -220,9 +214,9 @@ export class DownloadManager {
     );
 
     // if active is null, set it to the first key in the download queue
-    if (!this._activeKey && this.downloadQueue.length > 0) {
-      this._activeKey = this.downloadQueue[0].key;
-    }
+    // if (!this._activeKey && this.downloadQueue.length > 0) {
+    //   this._activeKey = this.downloadQueue[0].key;
+    // }
 
     this.addingQueue = [];
     this.removingQueue = [];
@@ -233,6 +227,7 @@ export class DownloadManager {
     }
 
     // unblock requests
+    console.timeEnd("reworkQueue");
     this.freeze = false;
   }
 
