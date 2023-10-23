@@ -41,12 +41,6 @@ export declare class DownloadManager {
      */
     private _activeIndex;
     /**
-     * The three sections of the download queue (first slices, active series, other series)
-     */
-    private q1;
-    private q2;
-    private q3;
-    /**
      * The indeces that delimits the three sections of the download queue
      */
     private qs;

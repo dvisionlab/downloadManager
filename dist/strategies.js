@@ -84,6 +84,7 @@ function threeParted(adding, actual, activeKey, activeIndex, qs) {
     if (q2.length > 0) {
         currentActiveKey = q2[0].key;
     }
+    console.log("adding");
     // Q1: get the first element of each series in adding queue and push it into q1
     adding.forEach(item => {
         q1.push({
@@ -93,14 +94,17 @@ function threeParted(adding, actual, activeKey, activeIndex, qs) {
             imageId: item.imageIds.shift() // TODO are we sure that imageIds is not empty ?
         });
     });
+    console.log("q3concat");
     // Q3: get the remaining elements of each series in adding queue and push it into q3
     q3 = concat(adding, q3, null);
     // Q2: if active key, push the active series in q2. If active index, order by "propagate" method.
     if (activeKey && currentActiveKey && activeKey === currentActiveKey) {
         // if active key is already in q2, do nothing
+        console.warn("activeKey is the same");
     }
     // else if (activeKey && currentActiveKey && activeKey !== currentActiveKey){
     else {
+        console.log("activeKey changed: q2 => q3");
         // put back active series in q3 (TODO reorder q3?)
         q3 = q3.concat(restoreOriginalOrder(q2));
         // reset q2
@@ -110,6 +114,7 @@ function threeParted(adding, actual, activeKey, activeIndex, qs) {
     }
     if (typeof activeIndex === "number") {
         const result = applyActiveIndex(q2, activeIndex);
+        console.log("applyActiveIndex", result);
         if (!result) {
             return actual;
         }

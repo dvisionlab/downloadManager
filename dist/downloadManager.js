@@ -86,10 +86,10 @@ class DownloadManager {
         return this._activeKey;
     }
     set activeIndex(index) {
-        if (!this._activeKey) {
-            console.warn("activeKey is not set");
-            return;
-        }
+        // if (!this._activeKey) {
+        //   console.warn("activeKey is not set");
+        //   return;
+        // }
         this._activeIndex = index;
         this.reworkQueue();
     }
@@ -165,6 +165,7 @@ class DownloadManager {
     reworkQueue() {
         // block requests
         this.freeze = true;
+        console.time("reworkQueue");
         // apply "remove" modifications
         this.removingQueue.forEach(key => {
             this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
@@ -177,9 +178,9 @@ class DownloadManager {
         // apply "add" modifications
         this.downloadQueue = strategies_1.default[this.strategy](this.addingQueue, this.downloadQueue, this._activeKey, this._activeIndex, this.qs);
         // if active is null, set it to the first key in the download queue
-        if (!this._activeKey && this.downloadQueue.length > 0) {
-            this._activeKey = this.downloadQueue[0].key;
-        }
+        // if (!this._activeKey && this.downloadQueue.length > 0) {
+        //   this._activeKey = this.downloadQueue[0].key;
+        // }
         this.addingQueue = [];
         this.removingQueue = [];
         if (this.verbose) {
@@ -187,6 +188,7 @@ class DownloadManager {
             console.table(this.downloadQueue);
         }
         // unblock requests
+        console.timeEnd("reworkQueue");
         this.freeze = false;
     }
     /**
