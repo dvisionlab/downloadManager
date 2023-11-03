@@ -120,24 +120,24 @@ describe("three parted strategy", () => {
     dm.getNextSlot(7); // pass series k2
     expect(dm.getNextSlot(3)).toEqual([
       {
-        imageId: "3-image1",
-        key: "k3",
-        seriesId: "C",
-        studyId: "3",
+        imageId: "1-image1",
+        key: "k1",
+        seriesId: "A",
+        studyId: "1",
         originalIndex: 1
       },
       {
-        imageId: "3-image2",
-        key: "k3",
-        seriesId: "C",
-        studyId: "3",
+        imageId: "1-image2",
+        key: "k1",
+        seriesId: "A",
+        studyId: "1",
         originalIndex: 2
       },
       {
-        imageId: "3-image3",
-        key: "k3",
-        seriesId: "C",
-        studyId: "3",
+        imageId: "1-image3",
+        key: "k1",
+        seriesId: "A",
+        studyId: "1",
         originalIndex: 3
       }
     ]);

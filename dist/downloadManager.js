@@ -138,7 +138,7 @@ class DownloadManager {
             key: key,
             seriesId: seriesId,
             studyId: studyId,
-            imageIds: imageIds
+            imageIds: imageIds.slice()
         });
         this.seriesData[key] = {
             numberOfImages: imageIds.length,
@@ -165,7 +165,6 @@ class DownloadManager {
     reworkQueue() {
         // block requests
         this.freeze = true;
-        console.time("reworkQueue");
         // apply "remove" modifications
         this.removingQueue.forEach(key => {
             this.downloadQueue = this.downloadQueue.filter(item => item.key !== key);
@@ -188,7 +187,6 @@ class DownloadManager {
             console.table(this.downloadQueue);
         }
         // unblock requests
-        console.timeEnd("reworkQueue");
         this.freeze = false;
     }
     /**
