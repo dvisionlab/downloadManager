@@ -160,7 +160,7 @@ export class DownloadManager {
       key: key,
       seriesId: seriesId,
       studyId: studyId,
-      imageIds: imageIds
+      imageIds: imageIds.slice()
     });
     this.seriesData[key] = {
       numberOfImages: imageIds.length,
@@ -189,7 +189,6 @@ export class DownloadManager {
   reworkQueue() {
     // block requests
     this.freeze = true;
-    console.time("reworkQueue");
 
     // apply "remove" modifications
     this.removingQueue.forEach(key => {
@@ -227,7 +226,6 @@ export class DownloadManager {
     }
 
     // unblock requests
-    console.timeEnd("reworkQueue");
     this.freeze = false;
   }
 
@@ -287,5 +285,16 @@ export class DownloadManager {
         }
       }, 20);
     });
+  }
+
+  /**
+   * Add an image on top of the download queue
+   * Useful for re-insert failed download in the queue
+   * @param item The item to add
+   */
+  addPriorityImage(item: downloadQueueItem) {
+    this.freeze = true;
+    this.downloadQueue.unshift(item);
+    this.freeze = false;
   }
 }

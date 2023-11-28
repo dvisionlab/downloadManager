@@ -286,4 +286,15 @@ export class DownloadManager {
       }, 20);
     });
   }
+
+  /**
+   * Add an image on top of the download queue
+   * Useful for re-insert failed download in the queue
+   * @param item The item to add
+   */
+  addPriorityImage(item: downloadQueueItem) {
+    this.freeze = true;
+    this.downloadQueue.unshift(item);
+    this.freeze = false;
+  }
 }
