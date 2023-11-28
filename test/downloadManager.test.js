@@ -142,6 +142,21 @@ describe("downloadManager", () => {
       new Array(5).fill("A")
     );
   });
+
+  test("priority add", async () => {
+    const dm = new DownloadManager();
+    const images1 = generateImageIds("series1-", 8);
+    dm.addSeries("k1", "A", "1", images1);
+
+    const nextSlot = await dm.getNextSlotAsync(5);
+    expect(nextSlot).toHaveLength(5);
+
+    // add a new image with higher priority
+    const missed = nextSlot[3];
+    dm.addPriorityImage(missed);
+    const nextSlot2 = await dm.getNextSlotAsync(5);
+    expect(nextSlot2[0]).toEqual(missed);
+  });
 });
 
 describe("alternate strategy", () => {

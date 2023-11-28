@@ -146,9 +146,11 @@ window.getNextSlot = getNextSlot;
 window.updateIndex = updateIndex;
 // @ts-ignore
 window.updateActiveIndex = updateActiveIndex;
+// @ts-ignore
+window.addPriorityImage = dm.addPriorityImage.bind(dm);
 
-setInterval(() => {
-  dm.getNextSlotAsync(1).then(slot => {
-    console.log("slot", slot[0]?.imageId, slot[0]?.originalIndex);
-  });
-}, 2000);
+// setInterval(() => {
+//   dm.getNextSlotAsync(1).then(slot => {
+//     console.log("slot", slot[0]?.imageId, slot[0]?.originalIndex);
+//   });
+// }, 2000);

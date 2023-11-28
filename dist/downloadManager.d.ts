@@ -107,4 +107,10 @@ export declare class DownloadManager {
      */
     getNextSlot(slotDimension: number): downloadQueueItem[] | null;
     getNextSlotAsync(slotDimension: number): Promise<downloadQueueItem[]>;
+    /**
+     * Add an image on top of the download queue
+     * Useful for re-insert failed download in the queue
+     * @param item The item to add
+     */
+    addPriorityImage(item: downloadQueueItem): void;
 }
