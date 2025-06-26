@@ -128,10 +128,12 @@ class DownloadManager {
      */
     addSeries(key, seriesId, studyId, imageIds) {
         // check that the series is not already in the seriesData
-        // TODO what if I want to add other slices for a series ? we could use s Set for the imagesIds
+        // TODO what if I want to add other slices for a series ? we could use a Set for the imagesIds
         if (key in this.seriesData) {
-            console.warn(`Series ${seriesId} is already in the download manager`);
-            return false;
+            console.warn(`key ${key} is already in the download manager, removing`);
+            // return false;
+            this.removingQueue.push(key);
+            delete this.seriesData[key];
         }
         // otherwise add it to the adding queue
         this.addingQueue.push({
